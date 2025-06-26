@@ -40,10 +40,14 @@
         </div>
       </div>
       <div class="hero-image" data-aos="fade-left">
-        <img
-          src="https://img.pikbest.com/origin/10/39/14/59WpIkbEsTVxf.jpg!bwr800"
-          alt="Kota Venkatesh"
-        />
+        <script
+          type="module"
+          src="https://unpkg.com/@splinetool/viewer@1.9.72/build/spline-viewer.js"
+        ></script>
+        <spline-viewer
+          url="https://prod.spline.design/1dcxapFMBHoCIfHs/scene.splinecode"
+          class="spline-large"
+        ></spline-viewer>
       </div>
     </section>
 
@@ -446,6 +450,7 @@
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script>
       // Initialize AOS
       AOS.init({
@@ -473,15 +478,44 @@
         });
       });
 
+      // Initialize EmailJS
+      (function () {
+        emailjs.init("VgfL2i0OOyf8Fo2la"); // Replace with your EmailJS public key
+      })();
+
       // Form Submission
       const contactForm = document.getElementById("contactForm");
       const submitBtn = document.getElementById("submitBtn");
 
       contactForm.addEventListener("submit", function (e) {
         e.preventDefault();
-        // Add your form submission logic here
-        alert("Thank you for your message! I will get back to you soon.");
-        contactForm.reset();
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending...";
+
+        const templateParams = {
+          from_name: document.getElementById("from_name").value,
+          from_email: document.getElementById("from_email").value,
+          subject: document.getElementById("subject").value,
+          message: document.getElementById("message").value,
+        };
+
+        emailjs
+          .send("service_rf8d1au", "template_gmcoxld", templateParams)
+          .then(
+            function (response) {
+              console.log("SUCCESS!", response.status, response.text);
+              alert("Thank you for your message! I will get back to you soon.");
+              contactForm.reset();
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Send Message";
+            },
+            function (error) {
+              console.error("FAILED...", error);
+              alert("Oops! Something went wrong. Please try again later.");
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Send Message";
+            }
+          );
       });
 
       // Active Navigation Link
